@@ -1,89 +1,54 @@
-let global={};
-window.onload=function ()
-{
-    let inp=document.getElementById('inp');
-    let box3=document.getElementById('box3');
-    let btn=document.getElementById('btn');
-    let todolist= JSON.parse(localStorage.getItem('todolist')) || [];
-    global.todolist=todolist;
-    display();
+const inputtdl = document.querySelector('.textarea')
+const buttontdl = document.querySelector('.buttoninput')
+const listtdl = document.querySelector('.todolist')
 
-    btn.onclick=function ()
-    {
-        let task=
-            {
-                task:inp.value,
-                done:false
-            }
-        global.todolist.push(task);
-
-        localStorage.setItem('todolist',JSON.stringify(global.todolist));
-        display();
-    }
-    function display()
-    {
-
-        let finallist= " ";
-        for(let i=0;i<global.todolist.length;i++)
-        {
-            finallist +=`<li><span><input onclick="toggle(this)" id="i${i}" type="checkbox" ></span>
-                          <span id="${i}">${global.todolist[i].task}</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                          <button id="b${i}" onclick="deleteEL(this)" style="background-color:darkseagreen">DELETE</button></li>`;
-
-        }
-
-        box3.innerHTML=" ";
-        box3.innerHTML=finallist;
-        for(let i=0;i<global.todolist.length;i++)
-        {
-            let checked=global.todolist[i].done;
-
-            strikeOff(checked,i) ;
-        }
-        document.getElementById('inp').placeholder="enter your task here ";
-
-
-    }
-    window.display=display;
+function clickButton(e) {
+    e.preventDefault()
+    addTodo()
 }
 
-global.todolist=JSON.parse(localStorage.getItem('todolist'));
+// adding todoList
+function addTodo() {
+    const itemall = document.createElement('div')
+    itemall.classList.add('itemall')
 
+    const item = document.createElement('p')
+    item.classList.add('item')
+    item.innerText = inputtdl.value
+    itemall.appendChild(item)
 
-function toggle(e1)
-{
-    let id=e1.id.substr(1);
+    if (inputtdl.value === '') return
 
-    global.todolist[id].done=!global.todolist[id].done;
-    let checked=global.todolist[id].done;
+    const checkbutton = document.createElement("button")
+    checkbutton.innerHTML = '<i class="fa-solid fa-check"></i>'
+    checkbutton.classList.add("check-button")
+    itemall.appendChild(checkbutton)
 
-    strikeOff(checked,id);
-    localStorage.setItem('todolist',JSON.stringify(global.todolist));
+    const trashbutton = document.createElement("button")
+    trashbutton.innerHTML = '<i class="fa-solid fa-trash"></i>'
+    trashbutton.classList.add("trash-button")
+    itemall.appendChild(trashbutton)
 
+    listtdl.appendChild(itemall)
+    inputtdl.value = ''
 }
-function strikeOff(check,id)
-{let e1=document.getElementById(id);
-    let c=`i${id}`;
-    let checkbox=document.getElementById(c);
-    if(check)
-    {
 
-        e1.style.textDecoration="line-through";
-        checkbox.checked=true;
+// checking and delete todoList 
+function okdel(e) {
+    const item = e.target
 
-
+    // check
+    if (item.classList[0] === 'check-button') {
+        const todolist = item.parentElement
+        todolist.classList.toggle('checklist')
     }
-    else
-    {    checkbox.checked=false;
-        e1.style.textDecoration="none";
 
+    // delete
+    if (item.classList[0] === 'trash-button') {
+        const todolist = item.parentElement
+        todolist.remove()
     }
 }
 
-function deleteEL(el)
-{   let id=el.id.substr(1);
-    global.todolist.splice(id,1);
-    localStorage.setItem('todolist',JSON.stringify(global.todolist));
-    display();
-
-}
+buttontdl.addEventListener('click', clickButton)
+listtdl.addEventListener('click', okdel)
